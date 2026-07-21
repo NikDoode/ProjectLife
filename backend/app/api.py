@@ -40,13 +40,6 @@ def read_items(db: DbSession) -> list[ItemRead]:
     return crud.get_items(db)
 
 @router.get(
-    "/tree",
-    response_model=list[ItemTreeNode],
-)
-def read_item_tree(db: DbSession) -> list[ItemTreeNode]:
-    return build_item_tree(db)
-
-@router.get(
     "/{item_id}",
     response_model=ItemRead,
 )
