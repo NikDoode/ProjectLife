@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 
 import { fetchItemTree } from "./api/items";
 import ItemDetails from "./components/ItemDetails/ItemDetails";
-import TreeView from "./views/Tree/TreeView";
+import ViewRenderer from "./views/ViewRenderer";
 import "./App.css";
 
 export default function App() {
+  const activeViewType = "tree";
   const [items, setItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,7 +67,8 @@ export default function App() {
       {!error && !isLoading && (
         <div className="app__workspace">
           <section className="app__tree-panel">
-            <TreeView
+            <ViewRenderer
+              viewType={activeViewType}
               items={items}
               selectedItemId={selectedItem?.id ?? null}
               onSelectItem={setSelectedItem}
