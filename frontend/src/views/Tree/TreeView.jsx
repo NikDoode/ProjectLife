@@ -1,7 +1,7 @@
 import TreeNode from "./TreeNode";
 import "./Tree.css";
 
-export default function Tree({
+export default function TreeView({
   items,
   selectedItemId,
   onSelectItem,

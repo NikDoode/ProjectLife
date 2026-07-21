@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { fetchItemTree } from "./api/items";
 import ItemDetails from "./components/ItemDetails/ItemDetails";
-import Tree from "./components/Tree/Tree";
+import TreeView from "./views/Tree/TreeView";
 import "./App.css";
 
 export default function App() {
@@ -63,7 +63,7 @@ export default function App() {
       {!error && !isLoading && (
         <div className="app__workspace">
           <section className="app__tree-panel">
-            <Tree
+            <TreeView
               items={items}
               selectedItemId={selectedItem?.id ?? null}
               onSelectItem={setSelectedItem}
