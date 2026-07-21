@@ -1,0 +1,4 @@
+TEST_MODE = True
+
+RESET_EVENTS = True
+RESET_UNRESOLVED = False

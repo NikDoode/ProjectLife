@@ -1,0 +1,24 @@
+{
+    "git.path": "git.exe",
+    "python.defaultInterpreterPath": "python.exe",
+
+    "terminal.integrated.profiles.windows": {
+        "Cmder": {
+            "path": "cmd.exe",
+            "args": [
+                "/k",
+                "%CMDER_HOME%\\vendor\\bin\\vscode_init.cmd"
+            ],
+            "icon": "terminal-cmd"
+        }
+    },
+
+    "terminal.integrated.defaultProfile.windows": "Cmder",
+    "terminal.integrated.cwd": "${workspaceFolder}",
+
+    "files.autoSave": "afterDelay",
+    "editor.formatOnSave": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python-envs.defaultEnvManager": "ms-python.python:system"
+}

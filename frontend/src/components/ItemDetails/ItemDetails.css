@@ -1,0 +1,64 @@
+.item-details {
+  min-height: 220px;
+  border: 1px solid #d8dee8;
+  border-radius: 12px;
+  padding: 20px;
+  background: #ffffff;
+}
+
+.item-details--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #667085;
+}
+
+.item-details__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.item-details__header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.item-details__kind {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 12px;
+}
+
+.item-details__kind--area {
+  background: #dbeafe;
+}
+
+.item-details__kind--project {
+  background: #ede9fe;
+}
+
+.item-details__kind--task {
+  background: #dcfce7;
+}
+
+.item-details__fields {
+  margin: 24px 0 0;
+}
+
+.item-details__fields div {
+  padding: 12px 0;
+  border-top: 1px solid #edf0f4;
+}
+
+.item-details__fields dt {
+  margin-bottom: 4px;
+  color: #667085;
+  font-size: 13px;
+}
+
+.item-details__fields dd {
+  margin: 0;
+}

@@ -1,0 +1,87 @@
+.app {
+  width: min(960px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.app__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.app__header h1 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.app__header p {
+  margin: 6px 0 0;
+  color: #667085;
+}
+
+.app__refresh-button,
+.app__error button {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 9px 15px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.app__refresh-button:hover:not(:disabled),
+.app__error button:hover {
+  background: #f2f4f7;
+}
+
+.app__refresh-button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.app__message,
+.app__error {
+  border: 1px solid #d8dee8;
+  border-radius: 12px;
+  padding: 24px;
+  background: #ffffff;
+}
+
+.app__error {
+  color: #b42318;
+}
+
+.app__error p {
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .app {
+    width: calc(100% - 20px);
+    padding: 16px 0;
+  }
+
+  .app__header {
+    align-items: flex-start;
+  }
+}
+
+.app__workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.app__tree-panel,
+.app__details-panel {
+  min-width: 0;
+}
+
+@media (max-width: 800px) {
+  .app__workspace {
+    grid-template-columns: 1fr;
+  }
+}

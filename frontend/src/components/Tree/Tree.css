@@ -1,0 +1,114 @@
+.tree {
+  overflow: hidden;
+  border: 1px solid #d8dee8;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.tree-message {
+  margin: 0;
+  padding: 24px;
+  color: #667085;
+}
+
+.tree-node__row {
+  display: flex;
+  gap: 8px;
+  min-height: 64px;
+  padding-top: 12px;
+  padding-right: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.tree-node__row--area {
+  background: #f7f9fc;
+}
+
+.tree-node__row--project,
+.tree-node__row--task {
+  background: #ffffff;
+}
+
+.tree-node__toggle {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.tree-node__toggle:hover:not(:disabled) {
+  background: #edf0f4;
+}
+
+.tree-node__toggle:disabled {
+  cursor: default;
+}
+
+.tree-node__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.tree-node__header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tree-node__title {
+  font-weight: 650;
+}
+
+.tree-node__kind {
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.tree-node__kind--area {
+  background: #dbeafe;
+}
+
+.tree-node__kind--project {
+  background: #ede9fe;
+}
+
+.tree-node__kind--task {
+  background: #dcfce7;
+}
+
+.tree-node__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 5px;
+  color: #667085;
+  font-size: 13px;
+}
+
+.tree-node__description {
+  margin: 7px 0 0;
+  color: #475467;
+  font-size: 14px;
+}
+
+.tree-node__row {
+  cursor: pointer;
+}
+
+.tree-node__row:hover {
+  background: #f5f8ff;
+}
+
+.tree-node__row--selected {
+  background: #eaf2ff;
+}
+
+.tree-node__row--selected:hover {
+  background: #eaf2ff;
+}
