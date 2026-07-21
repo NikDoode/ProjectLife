@@ -26,7 +26,10 @@ export default function App() {
   }
 
   useEffect(() => {
-    loadTree();
+    fetchItemTree()
+      .then(setItems)
+      .catch((loadError) => setError(loadError.message))
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (
