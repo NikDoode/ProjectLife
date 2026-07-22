@@ -56,6 +56,10 @@
   gap: 12px;
 }
 
+.spatial-view__navigation + .spatial-view__children {
+  margin-top: 64px;
+}
+
 .spatial-view__message {
   color: #667085;
   text-align: center;
