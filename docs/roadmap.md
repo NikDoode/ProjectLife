@@ -5,8 +5,8 @@ v0.1
 ✓ Tree View
 ✓ Inspector
 ✓ View Renderer
-□ Spatial View
-□ TodayPanel
+✓ Spatial View
+✓ TodayPanel
 
 v0.2
 
