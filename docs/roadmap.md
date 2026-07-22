@@ -49,7 +49,7 @@
 
 ---
 
-## Этап 004 — View Framework
+## Этап 004 — View Framework ✅
 
 Гипотеза
 
