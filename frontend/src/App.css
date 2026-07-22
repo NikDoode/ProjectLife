@@ -70,14 +70,33 @@
 
 .app__workspace {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
   gap: 20px;
   align-items: start;
 }
 
-.app__tree-panel,
+.app__view-panel,
 .app__details-panel {
   min-width: 0;
+}
+
+.app__view-switcher {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.app__view-switcher button {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.app__view-switcher button[aria-pressed="true"] {
+  border-color: #2e6fd8;
+  background: #eaf2ff;
 }
 
 @media (max-width: 800px) {

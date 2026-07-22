@@ -62,3 +62,12 @@
 .item-details__fields dd {
   margin: 0;
 }
+
+.item-details__today-action {
+  width: 100%;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #fff;
+  cursor: pointer;
+}

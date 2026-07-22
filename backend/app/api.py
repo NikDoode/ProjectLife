@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from . import crud
 from .database import get_db
-from .schemas import ItemCreate, ItemRead, ItemTreeNode
+from .schemas import ItemCreate, ItemRead, ItemStatusUpdate, ItemTreeNode
 from .services.tree_projection import build_item_tree
 
 
@@ -57,3 +57,23 @@ def read_item(
 
 
     return item
+
+
+@router.patch(
+    "/{item_id}/status",
+    response_model=ItemRead,
+)
+def update_item_status(
+    item_id: int,
+    item_data: ItemStatusUpdate,
+    db: DbSession,
+) -> ItemRead:
+    item = crud.get_item(db, item_id)
+
+    if item is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Объект не найден",
+        )
+
+    return crud.update_item_status(db, item, item_data)

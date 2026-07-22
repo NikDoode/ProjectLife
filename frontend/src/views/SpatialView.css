@@ -1,0 +1,62 @@
+.spatial-view {
+  min-height: 360px;
+  border: 1px solid #d8dee8;
+  border-radius: 12px;
+  padding: 20px;
+  background: #fff;
+}
+
+.spatial-view__navigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spatial-view__navigation button,
+.spatial-view__card {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.spatial-view__navigation button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.spatial-view__breadcrumbs button {
+  border: 0;
+  padding: 2px;
+  color: #344054;
+}
+
+.spatial-view__center {
+  display: flex;
+  justify-content: center;
+  margin: 64px 0 40px;
+}
+
+.spatial-view__card--center {
+  padding: 18px 28px;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.spatial-view__card--selected {
+  border-color: #2e6fd8;
+  background: #eaf2ff;
+}
+
+.spatial-view__children {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.spatial-view__message {
+  color: #667085;
+  text-align: center;
+}

@@ -31,6 +31,10 @@ class ItemRead(BaseModel):
     updated_at: datetime
 
 
+class ItemStatusUpdate(BaseModel):
+    status: ItemStatus
+
+
 class ItemTreeNode(ItemRead):
     children: list["ItemTreeNode"] = Field(default_factory=list)
 

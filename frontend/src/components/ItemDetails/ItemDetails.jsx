@@ -30,7 +30,12 @@ function formatDate(dateString) {
   );
 }
 
-export default function ItemDetails({ item }) {
+export default function ItemDetails({
+  item,
+  isInToday,
+  onAddToToday,
+  onRemoveFromToday,
+}) {
   if (!item) {
     return (
       <div className="item-details item-details--empty">
@@ -69,6 +74,18 @@ export default function ItemDetails({ item }) {
           <dd>{item.description || "Не указано"}</dd>
         </div>
       </dl>
+
+      {item.kind === "task" && (
+        <button
+          type="button"
+          className="item-details__today-action"
+          onClick={() =>
+            isInToday ? onRemoveFromToday(item.id) : onAddToToday(item.id)
+          }
+        >
+          {isInToday ? "Убрать из «Сегодня»" : "Добавить в «Сегодня»"}
+        </button>
+      )}
     </div>
   );
 }
