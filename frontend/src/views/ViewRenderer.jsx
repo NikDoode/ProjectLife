@@ -10,6 +10,10 @@ export default function ViewRenderer({
   nodeDisplay,
   onNodeDisplayChange,
   preferences,
+  workspaces,
+  activeWorkspaceId,
+  onSelectWorkspace,
+  onCreateWorkspace,
 }) {
   if (viewType === "tree") {
     return <div className="view-with-inspector">
@@ -32,6 +36,10 @@ export default function ViewRenderer({
         nodeDisplay={nodeDisplay}
         onNodeDisplayChange={onNodeDisplayChange}
         preferences={preferences}
+        workspaces={workspaces}
+        activeWorkspaceId={activeWorkspaceId}
+        onSelectWorkspace={onSelectWorkspace}
+        onCreateWorkspace={onCreateWorkspace}
       />
     );
   }

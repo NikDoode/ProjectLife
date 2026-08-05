@@ -1,4 +1,4 @@
-import { cloneElement, useMemo, useState } from "react";
+import { cloneElement, useEffect, useMemo, useRef, useState } from "react";
 import "./SpatialView.css";
 
 const MIN_SCALE = 0.55;
@@ -25,11 +25,15 @@ function isVisible(item, preferences) {
   return true;
 }
 
-export default function SpatialView({ items, selectedItemId, onSelectItem, inspector, nodeDisplay = {}, onNodeDisplayChange, preferences }) {
+export default function SpatialView({ items, selectedItemId, onSelectItem, inspector, nodeDisplay = {}, onNodeDisplayChange, preferences, workspaces, activeWorkspaceId, onSelectWorkspace, onCreateWorkspace }) {
   const [centerId, setCenterId] = useState(null);
   const [dragPosition, setDragPosition] = useState(null);
   const [dragState, setDragState] = useState(null);
   const [viewport, setViewport] = useState({ scale: 1, x: 0, y: 0 });
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  const [inspectorSize, setInspectorSize] = useState({ width: 0, height: 0 });
+  const stageRef = useRef(null);
+  const inspectorRef = useRef(null);
   const index = useMemo(() => indexTree(items), [items]);
   const entry = index.get(centerId);
   const center = entry?.item ?? null;
@@ -44,12 +48,39 @@ export default function SpatialView({ items, selectedItemId, onSelectItem, inspe
   visible.forEach((item, itemIndex) => positions.set(item.id, nodeDisplay[item.id]?.position ?? automaticPosition(itemIndex, visible.length, false)));
   if (dragPosition) positions.set(dragPosition.id, dragPosition.position);
   const selectedPosition = positions.get(selectedItemId);
-  const inspectorStyle = selectedPosition ? {
-    "--inspector-left": `calc(${selectedPosition.x}% ${selectedPosition.x > 65 ? "- 275px" : "+ 70px"})`,
-    "--inspector-top": `calc(${selectedPosition.y}% ${selectedPosition.y > 65 ? "- 245px" : "- 35px"})`,
-    transform: `scale(${1 / viewport.scale})`,
-    transformOrigin: "top left",
-  } : null;
+  const selectedDisplay = selectedItemId ? nodeDisplay[selectedItemId] ?? {} : {};
+  const nodeDiameter = { small: 56, medium: 110, large: 170 }[selectedDisplay.size ?? "medium"];
+  const selectedScreenPosition = selectedPosition ? { x: viewport.x + stageSize.width * selectedPosition.x / 100 * viewport.scale, y: viewport.y + stageSize.height * selectedPosition.y / 100 * viewport.scale } : null;
+  const inspectorStyle = selectedScreenPosition ? (() => {
+    const margin = 10;
+    const gap = 12;
+    const radius = nodeDiameter * viewport.scale / 2;
+    const right = selectedScreenPosition.x + radius + gap;
+    const preferredLeft = right + inspectorSize.width <= stageSize.width - margin ? right : selectedScreenPosition.x - radius - gap - inspectorSize.width;
+    const maxLeft = Math.max(margin, stageSize.width - inspectorSize.width - margin);
+    const maxTop = Math.max(margin, stageSize.height - inspectorSize.height - margin);
+    return { left: `${Math.max(margin, Math.min(preferredLeft, maxLeft))}px`, top: `${Math.max(margin, Math.min(selectedScreenPosition.y - 28, maxTop))}px`, maxHeight: `${Math.max(0, stageSize.height - margin * 2)}px`, visibility: inspectorSize.width > 0 ? "visible" : "hidden" };
+  })() : null;
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return undefined;
+    const observer = new ResizeObserver(([entry]) => setStageSize({ width: entry.contentRect.width, height: entry.contentRect.height }));
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const panel = inspectorRef.current;
+    if (!panel) return undefined;
+    const observer = new ResizeObserver(([entry]) => {
+      const box = entry.borderBoxSize?.[0];
+      const next = { width: box?.inlineSize ?? entry.target.offsetWidth, height: box?.blockSize ?? entry.target.offsetHeight };
+      setInspectorSize((current) => current.width === next.width && current.height === next.height ? current : next);
+    });
+    observer.observe(panel);
+    return () => observer.disconnect();
+  }, [selectedItemId, inspector]);
 
   function pointerPosition(event) {
     const rect = event.currentTarget.closest(".spatial-stage").getBoundingClientRect();
@@ -99,13 +130,13 @@ export default function SpatialView({ items, selectedItemId, onSelectItem, inspe
   }
 
   return <section className="spatial-view">
-    <div className="spatial-nav"><button onClick={() => setCenterId(entry?.parent?.id ?? null)} disabled={!center} aria-label="Назад">‹</button><button onClick={() => setCenterId(null)}>Обзор</button>{path.map((item) => <span key={item.id}>› <button onClick={() => setCenterId(item.id)}>{item.title}</button></span>)}</div>
-    {!items.length ? <p className="spatial-empty">Здесь пока пусто. Создайте первую область.</p> : <div className="spatial-stage" onWheel={zoom} onClick={(event) => { if (event.target === event.currentTarget || event.target.classList.contains("spatial-viewport")) onSelectItem(null); }}>
+    <div className="spatial-nav"><div className="workspace-picker"><select value={activeWorkspaceId} onChange={(event) => { setCenterId(null); onSelectWorkspace(event.target.value); }} aria-label="Рабочее пространство">{workspaces.map((workspace) => <option key={workspace.id} value={workspace.id}>{workspace.name}</option>)}</select><button className="workspace-picker__add" onClick={onCreateWorkspace} title="Создать рабочее пространство" aria-label="Создать рабочее пространство">＋</button></div><div className="spatial-breadcrumbs"><button onClick={() => setCenterId(entry?.parent?.id ?? null)} disabled={!center} aria-label="Назад">‹</button><button onClick={() => setCenterId(null)}>Обзор</button>{path.map((item) => <span key={item.id}>› <button onClick={() => setCenterId(item.id)}>{item.title}</button></span>)}</div></div>
+    {!items.length ? <p className="spatial-empty">Здесь пока пусто. Создайте первую область.</p> : <div className="spatial-stage" ref={stageRef} onWheel={zoom} onClick={(event) => { if (event.target === event.currentTarget || event.target.classList.contains("spatial-viewport")) onSelectItem(null); }}>
       <div className={`spatial-viewport ${preferences.showGrid ? "show-grid" : ""}`} style={{ transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.scale})` }}>
         {center && preferences.showLines && <svg className="spatial-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{visible.map((item) => { const source = positions.get(center.id); const target = positions.get(item.id); return <line key={item.id} x1={source.x} y1={source.y} x2={target.x} y2={target.y} />; })}</svg>}
         {center && node(center, true)}{visible.map((item) => node(item))}
-        {inspector && selectedPosition && cloneElement(inspector, { style: inspectorStyle })}
       </div>
+      {inspector && selectedPosition && <div ref={inspectorRef} className="spatial-inspector-shell" style={inspectorStyle}>{cloneElement(inspector, { style: { position: "relative", left: "auto", top: "auto", maxHeight: "inherit" } })}</div>}
     </div>}
     {center && !visible.length && <p className="spatial-empty spatial-empty--children">Нет отображаемых дочерних элементов.</p>}
   </section>;
