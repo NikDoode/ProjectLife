@@ -1,90 +1,42 @@
 # Project Life — точка входа
 
-Ты работаешь с репозиторием `NikDoode/ProjectLife`.
 
-Перед обсуждением проекта или предложением следующего шага восстанови контекст по актуальным файлам репозитория.
+## Правила обновления документации
 
-## Порядок ознакомления
+Документация разделена по уровню стабильности. При выполнении задач обновляй только те документы, содержание которых действительно изменилось.
 
-1. Прочитай `docs/architecture.md`.
-2. Прочитай `docs/decisions.md`.
-3. Прочитай `docs/ui/roadmap.md`.
-4. Прочитай `docs/spatial-view.md`.
-5. Прочитай `docs/current-state.md`, если файл существует.
-6. Прочитай последние записи `docs/dev-log.md`, если файл существует.
+Для документации правила этого раздела уточняют общий запрет изменять файлы без прямой просьбы пользователя: документы текущего состояния и новые ADR допускается обновлять автоматически только в описанных ниже случаях.
 
-После документации изучи текущее устройство проекта:
+### Документы текущего состояния
 
-backend\app\
-backend\app\__init__.py
-backend\app\api.py
-backend\app\crud.py
-backend\app\database.py
-backend\app\main.py
-backend\app\models.py
-backend\app\schemas.py
+После выполнения соответствующей задачи можно автоматически обновлять:
 
-backend\app\services\__init__.py
-backend\app\services\tree_projection.py
-backend\data\task_manager.db
-config.py
-docs\index.md
-docs\ui-principles.md
-docs\ui\spatial-view.md.md
-frontend\.gitignore
-frontend\dist\assets\index-C3GBtPip.css
-frontend\dist\assets\index-D12dIAME.js
-frontend\dist\favicon.svg
-frontend\dist\icons.svg
-frontend\dist\index.html
-frontend\eslint.config.js
-frontend\index.html
-frontend\package-lock.json
-frontend\package.json
-frontend\public\favicon.svg
-frontend\public\icons.svg
-frontend\README.md
-frontend\src\api\items.js
-frontend\src\App.css
-frontend\src\App.jsx
-frontend\src\assets\hero.png
-frontend\src\assets\react.svg
-frontend\src\assets\vite.svg
-frontend\src\components\ItemDetails\ItemDetails.css
-frontend\src\components\ItemDetails\ItemDetails.jsx
-frontend\src\components\TodayPanel.css
-frontend\src\components\TodayPanel.jsx
-frontend\src\index.css
-frontend\src\main.jsx
-frontend\src\views\SpatialView.css
-frontend\src\views\SpatialView.jsx
-frontend\src\views\Tree\Tree.css
-frontend\src\views\Tree\TreeNode.jsx
-frontend\src\views\Tree\TreeView.jsx
-frontend\src\views\ViewRenderer.jsx
-frontend\vite.config.js
-requirements.txt
-scripts\backend.bat
-scripts\dev.bat
-scripts\frontend.bat
+- `docs/roadmap.md`;
+- `docs/current-state.md`, если файл существует;
+- `docs/dev-log.md`, если файл существует.
 
-## Правила работы
+Эти документы описывают фактическое состояние и ход развития проекта. Их обновление в рамках соответствующей задачи не требует отдельного указания пользователя.
 
-- Считай содержимое репозитория источником истины о текущей реализации.
-- Не полагайся только на историю чата, если она расходится с актуальными файлами.
-- Отличай:
-  - уже реализованное;
-  - принятое, но ещё не реализованное;
-  - идеи и открытые вопросы.
-- Не предлагай крупную переработку до ознакомления с архитектурой и решениями.
-- Не изменяй файлы без прямой просьбы пользователя.
-- Если какой-либо файл отсутствует или недоступен, сообщи об этом и продолжи с доступными материалами.
-- После чтения кратко сообщи:
-  1. что уже реализовано;
-  2. какие ключевые решения приняты;
-  3. на чём остановилась работа;
-  4. какой следующий шаг зафиксирован в документации;
-  5. какие противоречия или пробелы обнаружены.
+### Архитектурные решения
+
+`docs/decisions.md` можно автоматически дополнять только при появлении нового архитектурного решения, которое необходимо зафиксировать как ADR.
+
+Исправления поведения, небольшие улучшения интерфейса и устранение ошибок не являются архитектурными решениями и не требуют изменения `docs/decisions.md`.
+
+### Концептуальные документы
+
+Следующие документы являются источниками архитектуры и принципов проекта:
+
+- `docs/architecture.md`;
+- документ Spatial View (`docs/ui/spatial-view.md.md`, указанный в порядке ознакомления как `docs/spatial-view.md`);
+- `docs/ui-principles.md`;
+- `docs/PROJECT.md`.
+
+Не изменяй эти документы без прямого указания пользователя. Текущая задача по добавлению правил в `docs/PROJECT.md` является явным исключением для самого `docs/PROJECT.md`.
+
+### Общий принцип
+
+Не изменяй документацию только ради единообразия, обновления формулировок или отражения изменений, которые не влияют на содержание конкретного документа. Предпочтительно ограничиваться минимальным набором документов, действительно описывающих изменившееся состояние проекта.
 
 ## Цель
 
