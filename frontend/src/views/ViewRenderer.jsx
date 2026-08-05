@@ -6,15 +6,17 @@ export default function ViewRenderer({
   items,
   selectedItemId,
   onSelectItem,
+  inspector,
 }) {
   if (viewType === "tree") {
-    return (
+    return <div className="view-with-inspector">
       <TreeView
         items={items}
         selectedItemId={selectedItemId}
         onSelectItem={onSelectItem}
       />
-    );
+      {inspector}
+    </div>;
   }
 
   if (viewType === "spatial") {
@@ -23,6 +25,7 @@ export default function ViewRenderer({
         items={items}
         selectedItemId={selectedItemId}
         onSelectItem={onSelectItem}
+        inspector={inspector}
       />
     );
   }

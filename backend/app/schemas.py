@@ -16,6 +16,16 @@ class ItemCreate(BaseModel):
     due_at: date | None = None
 
 
+class ItemUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=255)
+    parent_id: int | None = None
+    kind: ItemKind | None = None
+    description: str | None = None
+    status: ItemStatus | None = None
+    priority: ItemPriority | None = None
+    due_at: date | None = None
+
+
 class ItemRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

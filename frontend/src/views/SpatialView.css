@@ -1,66 +1,12 @@
-.spatial-view {
-  min-height: 360px;
-  border: 1px solid #d8dee8;
-  border-radius: 12px;
-  padding: 20px;
-  background: #fff;
-}
-
-.spatial-view__navigation {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.spatial-view__navigation button,
-.spatial-view__card {
-  border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  padding: 8px 12px;
-  background: #fff;
-  cursor: pointer;
-}
-
-.spatial-view__navigation button:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
-.spatial-view__breadcrumbs button {
-  border: 0;
-  padding: 2px;
-  color: #344054;
-}
-
-.spatial-view__center {
-  display: flex;
-  justify-content: center;
-  margin: 64px 0 40px;
-}
-
-.spatial-view__card--center {
-  padding: 18px 28px;
-  font-size: 18px;
-  font-weight: 650;
-}
-
-.spatial-view__card--selected {
-  border-color: #2e6fd8;
-  background: #eaf2ff;
-}
-
-.spatial-view__children {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-}
-
-.spatial-view__navigation + .spatial-view__children {
-  margin-top: 64px;
-}
-
-.spatial-view__message {
-  color: #667085;
-  text-align: center;
-}
+.spatial-view { min-height: calc(100vh - 64px); overflow: hidden; background-image: radial-gradient(#45607855 1px, transparent 1px); background-size: 22px 22px; }
+.spatial-nav { height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 20px; color: #617b92; font-size: 12px; }
+.spatial-nav button { border: 0; padding: 4px; background: none; color: #7390a9; cursor: pointer; }.spatial-nav button:disabled { opacity: .3; }
+.spatial-stage { position: relative; width: 100%; height: calc(100vh - 112px); min-height: 500px; }
+.spatial-links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.spatial-links line { vector-effect: non-scaling-stroke; stroke: #3b5263; stroke-width: 1; }
+.spatial-node { position: absolute; z-index: 2; width: 108px; min-height: 64px; transform: translate(-50%, -50%); border: 1px solid #354655; border-radius: 50%; padding: 10px; background: #18232e; color: #d1dbe5; cursor: pointer; font-size: 12px; line-height: 1.25; text-align: center; }
+.spatial-node span { display: block; overflow-wrap: anywhere; writing-mode: horizontal-tb; transform: none; }
+.spatial-node.center { width: 122px; min-height: 76px; border-color: #376f9f; background: #1b2a38; }.spatial-node.selected { border-color: #4b94d5; box-shadow: 0 0 0 3px #4385be1f; }
+.kind-dot { display: block; width: 7px; height: 7px; margin: 0 auto 7px; border-radius: 50%; background: #71869a; }.kind-dot.project { background: #579de0; }.kind-dot.task { background: #8ba0b4; }
+.spatial-empty { margin: 220px auto 0; text-align: center; color: #71869a; }.spatial-empty--children { margin-top: -120px; }
+@media (max-width: 760px) { .spatial-node { width: 92px; font-size: 11px; }.spatial-stage { min-height: 560px; } }
