@@ -7,6 +7,9 @@ export default function ViewRenderer({
   selectedItemId,
   onSelectItem,
   inspector,
+  nodeDisplay,
+  onNodeDisplayChange,
+  preferences,
 }) {
   if (viewType === "tree") {
     return <div className="view-with-inspector">
@@ -26,6 +29,9 @@ export default function ViewRenderer({
         selectedItemId={selectedItemId}
         onSelectItem={onSelectItem}
         inspector={inspector}
+        nodeDisplay={nodeDisplay}
+        onNodeDisplayChange={onNodeDisplayChange}
+        preferences={preferences}
       />
     );
   }
