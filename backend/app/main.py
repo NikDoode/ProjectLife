@@ -1,11 +1,16 @@
 from fastapi import FastAPI
 
 from .api import router as items_router
-from .database import Base, engine
+from .database import Base, SessionLocal, engine
+from .relations_api import router as relations_router
+from .workspaces_api import router as workspaces_router
+from .crud import ensure_general_workspace
 from fastapi.middleware.cors import CORSMiddleware
 
 
 Base.metadata.create_all(bind=engine)
+with SessionLocal() as db:
+    ensure_general_workspace(db)
 
 app = FastAPI(
     title="Spatial Task Manager",
@@ -24,6 +29,8 @@ app.add_middleware(
 )
 
 app.include_router(items_router)
+app.include_router(workspaces_router)
+app.include_router(relations_router)
 
 
 @app.get("/")

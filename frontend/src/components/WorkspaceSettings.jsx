@@ -10,6 +10,12 @@ export default function WorkspaceSettings({ preferences, onChange, onClose, onRe
     <fieldset><legend>Отображение</legend>
       <label><input type="checkbox" checked={preferences.showGrid} onChange={() => toggle("showGrid")} />Показывать сетку</label>
       <label><input type="checkbox" checked={preferences.showLines} onChange={() => toggle("showLines")} />Показывать линии связей</label>
+      {preferences.showLines && <>
+        <label><input type="checkbox" checked={preferences.showHierarchy} onChange={() => toggle("showHierarchy")} />Каноническая иерархия</label>
+        <label><input type="checkbox" checked={preferences.showAdditionalParents} onChange={() => toggle("showAdditionalParents")} />Дополнительные родители</label>
+        <label><input type="checkbox" checked={preferences.showSemanticRelations} onChange={() => toggle("showSemanticRelations")} />Смысловые связи</label>
+        <label><input type="checkbox" checked={preferences.showLocalRelations} onChange={() => toggle("showLocalRelations")} />Локальные связи пространства</label>
+      </>}
       <label><input type="checkbox" checked={preferences.showDone} onChange={() => toggle("showDone")} />Показывать выполненные задачи</label>
       <label><input type="checkbox" checked={preferences.showArchived} onChange={() => toggle("showArchived")} />Показывать архивные объекты</label>
     </fieldset>

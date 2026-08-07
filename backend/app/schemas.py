@@ -1,8 +1,8 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
-from .models import ItemKind, ItemPriority, ItemStatus
+from .models import ItemKind, ItemPriority, ItemStatus, RelationType
 
 
 class ItemCreate(BaseModel):
@@ -50,3 +50,40 @@ class ItemTreeNode(ItemRead):
 
 
 ItemTreeNode.model_rebuild()
+
+
+class WorkspaceCreate(BaseModel):
+    id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    name: str = Field(min_length=1, max_length=255)
+
+
+class WorkspaceRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    name: str
+    system: bool
+    created_at: datetime
+
+
+class RelationCreate(BaseModel):
+    source_id: int
+    target_id: int
+    type: RelationType
+    workspace_id: str | None = None
+
+
+class RelationRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    source_id: int
+    target_id: int
+    type: RelationType
+    workspace_id: str | None
+    created_at: datetime
+
+    @computed_field
+    @property
+    def scope(self) -> str:
+        return "global" if self.workspace_id is None else "workspace"

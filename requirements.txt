@@ -11,3 +11,7 @@ python-dotenv
 pydantic
 
 pydantic-settings
+
+pytest
+
+httpx

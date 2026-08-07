@@ -44,3 +44,17 @@ async function request(path, options = {}) {
 export const createItem = (data) => request("/items", { method: "POST", body: JSON.stringify(data) });
 export const updateItem = (id, data) => request(`/items/${id}`, { method: "PATCH", body: JSON.stringify(data) });
 export const deleteItem = (id) => request(`/items/${id}`, { method: "DELETE" });
+
+export const fetchWorkspaces = () => request("/workspaces");
+export const createWorkspaceRecord = (data) => request("/workspaces", {
+  method: "POST",
+  body: JSON.stringify(data),
+});
+export const fetchRelations = () => request("/relations");
+export const createRelation = (data) => request("/relations", {
+  method: "POST",
+  body: JSON.stringify(data),
+});
+export const deleteRelation = (id) => request(`/relations/${id}`, {
+  method: "DELETE",
+});

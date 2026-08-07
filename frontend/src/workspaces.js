@@ -37,3 +37,18 @@ export function filterTreeByIds(items, visibleIds) {
 export function isItemIncluded(items, rules, itemId) {
   return getVisibleItemIds(items, rules).has(itemId);
 }
+
+export function getPresenceRuleMode(items, rules, itemId) {
+  const direct = rules.find((rule) => rule.itemId === itemId);
+  if (direct) return direct.mode;
+  const byId = new Map(flattenItems(items).map((item) => [item.id, item]));
+  const item = byId.get(itemId);
+  if (!item) return "self";
+  if (rules.some((rule) => rule.mode === "children" && rule.itemId === item.parent_id)) return "self";
+  let parentId = item.parent_id;
+  while (parentId !== null) {
+    if (rules.some((rule) => rule.mode === "subtree" && rule.itemId === parentId)) return "subtree";
+    parentId = byId.get(parentId)?.parent_id ?? null;
+  }
+  return "self";
+}

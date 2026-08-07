@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from enum import Enum as PyEnum
 
-from sqlalchemy import Date, DateTime, Enum, ForeignKey, String, Text
+from sqlalchemy import Date, DateTime, Enum, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .database import Base
@@ -26,6 +26,13 @@ class ItemPriority(str, PyEnum):
     NORMAL = "normal"
     HIGH = "high"
     CRITICAL = "critical"
+
+
+class RelationType(str, PyEnum):
+    PARENT_OF = "parent_of"
+    BLOCKS = "blocks"
+    DEPENDS_ON = "depends_on"
+    RELATED_TO = "related_to"
 
 
 class Item(Base):
@@ -84,3 +91,38 @@ class Item(Base):
         onupdate=datetime.now,
         nullable=False,
     )
+
+
+class Workspace(Base):
+    __tablename__ = "workspaces"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    system: Mapped[bool] = mapped_column(default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, nullable=False)
+
+
+class Relation(Base):
+    __tablename__ = "relations"
+    __table_args__ = (
+        UniqueConstraint(
+            "source_id",
+            "target_id",
+            "type",
+            "workspace_id",
+            name="uq_relation_endpoints_type_workspace",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    source_id: Mapped[int] = mapped_column(
+        ForeignKey("items.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    target_id: Mapped[int] = mapped_column(
+        ForeignKey("items.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    type: Mapped[RelationType] = mapped_column(Enum(RelationType), nullable=False, index=True)
+    workspace_id: Mapped[str | None] = mapped_column(
+        ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, nullable=False)

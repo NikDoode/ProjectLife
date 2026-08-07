@@ -5,7 +5,11 @@
 .spatial-viewport { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
 .spatial-viewport.show-grid { background-image: radial-gradient(var(--grid-color) 1px, transparent 1px); background-size: 22px 22px; }
 .spatial-inspector-shell { position: absolute; z-index: 10; width: max-content; }
-.spatial-links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }.spatial-links line { vector-effect: non-scaling-stroke; stroke: var(--line-color); stroke-width: 1; }
+.spatial-links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }.spatial-links line { vector-effect: non-scaling-stroke; stroke: var(--line-color); stroke-width: 1; stroke-linecap: round; stroke-opacity: .72; }.spatial-links marker path { fill: var(--line-color); fill-opacity: .72; }
+.spatial-links .link-parent_of { stroke-dasharray: 7 5; stroke-width: 1.5; }
+.spatial-links .link-local { stroke-dasharray: 2 5; stroke-opacity: .55; }
+.spatial-links .link-related_to { stroke-dasharray: 3 3; }
+.spatial-links .link-blocks { stroke-width: 2; }
 .spatial-node { --node-color: #263847; position: absolute; z-index: 2; display: grid; place-content: center; width: 110px; height: 110px; transform: translate(-50%, -50%); touch-action: none; border: 1px solid color-mix(in srgb, var(--node-color), #a9c7e0 22%); border-radius: 50%; padding: 10px; overflow: hidden; background: color-mix(in srgb, var(--node-color), var(--workspace-bg) 25%); color: var(--text); cursor: grab; font-size: 12px; line-height: 1.25; text-align: center; }
 .spatial-node:active, .spatial-node.dragging { cursor: grabbing; z-index: 5; }.spatial-node span { display: block; overflow-wrap: anywhere; writing-mode: horizontal-tb; transform: none; }.spatial-node.center { border-color: color-mix(in srgb, var(--node-color), #69b6f4 45%); }.spatial-node.selected { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 75%); }
 .spatial-node.size-small { width: 56px; height: 56px; font-size: 9px; }.spatial-node.size-large { width: 170px; height: 170px; font-size: 28px; }

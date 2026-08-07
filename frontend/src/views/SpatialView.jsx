@@ -25,7 +25,7 @@ function isVisible(item, preferences) {
   return true;
 }
 
-export default function SpatialView({ items, selectedItemId, onSelectItem, inspector, nodeDisplay = {}, onNodeDisplayChange, preferences, workspaces, activeWorkspaceId, onSelectWorkspace, onCreateWorkspace }) {
+export default function SpatialView({ items, relations = [], selectedItemId, onSelectItem, inspector, nodeDisplay = {}, onNodeDisplayChange, preferences, workspaces, activeWorkspaceId, onSelectWorkspace, onCreateWorkspace, onCenterChange }) {
   const [centerId, setCenterId] = useState(null);
   const [dragPosition, setDragPosition] = useState(null);
   const [dragState, setDragState] = useState(null);
@@ -37,7 +37,24 @@ export default function SpatialView({ items, selectedItemId, onSelectItem, inspe
   const index = useMemo(() => indexTree(items), [items]);
   const entry = index.get(centerId);
   const center = entry?.item ?? null;
-  const candidates = center ? center.children ?? [] : items;
+  useEffect(() => {
+    onCenterChange(centerId);
+  }, [centerId, onCenterChange]);
+  const canonicalCandidates = center ? center.children ?? [] : items;
+  const additionalCandidates = center
+    ? relations
+      .filter((relation) => (
+        relation.type === "parent_of"
+        && relation.source_id === center.id
+        && preferences.showAdditionalParents
+        && (relation.workspace_id === null || preferences.showLocalRelations)
+      ))
+      .map((relation) => index.get(relation.target_id)?.item)
+      .filter(Boolean)
+    : [];
+  const candidates = [...new Map(
+    [...canonicalCandidates, ...additionalCandidates].map((item) => [item.id, item]),
+  ).values()];
   const visible = candidates.filter((item) => isVisible(item, preferences));
   const path = [];
   let pathItem = center;
@@ -47,6 +64,15 @@ export default function SpatialView({ items, selectedItemId, onSelectItem, inspe
   if (center) positions.set(center.id, nodeDisplay[center.id]?.position ?? automaticPosition(0, 1, true));
   visible.forEach((item, itemIndex) => positions.set(item.id, nodeDisplay[item.id]?.position ?? automaticPosition(itemIndex, visible.length, false)));
   if (dragPosition) positions.set(dragPosition.id, dragPosition.position);
+  const displayedItems = new Map();
+  if (center) displayedItems.set(center.id, center);
+  visible.forEach((item) => displayedItems.set(item.id, item));
+  const visibleRelations = relations.filter((relation) => {
+    if (!displayedItems.has(relation.source_id) || !displayedItems.has(relation.target_id)) return false;
+    if (relation.workspace_id !== null && !preferences.showLocalRelations) return false;
+    if (relation.type === "parent_of") return preferences.showAdditionalParents;
+    return preferences.showSemanticRelations;
+  });
   const selectedPosition = positions.get(selectedItemId);
   const selectedDisplay = selectedItemId ? nodeDisplay[selectedItemId] ?? {} : {};
   const nodeDiameter = { small: 56, medium: 110, large: 170 }[selectedDisplay.size ?? "medium"];
@@ -122,6 +148,23 @@ export default function SpatialView({ items, selectedItemId, onSelectItem, inspe
     setViewport({ scale: nextScale, x: cursorX - (cursorX - viewport.x) * ratio, y: cursorY - (cursorY - viewport.y) * ratio });
   }
 
+  function lineGeometry(sourceItem, targetItem) {
+    const source = positions.get(sourceItem.id);
+    const target = positions.get(targetItem.id);
+    if (!source || !target || !stageSize.width || !stageSize.height) return { x1: source?.x ?? 0, y1: source?.y ?? 0, x2: target?.x ?? 0, y2: target?.y ?? 0 };
+    const sourceX = stageSize.width * source.x / 100;
+    const sourceY = stageSize.height * source.y / 100;
+    const targetX = stageSize.width * target.x / 100;
+    const targetY = stageSize.height * target.y / 100;
+    const distance = Math.hypot(targetX - sourceX, targetY - sourceY) || 1;
+    const unitX = (targetX - sourceX) / distance;
+    const unitY = (targetY - sourceY) / distance;
+    const diameter = (item) => ({ small: 56, medium: 110, large: 170 }[nodeDisplay[item.id]?.size ?? "medium"]);
+    const sourceRadius = diameter(sourceItem) / 2 + 2;
+    const targetRadius = diameter(targetItem) / 2 + 5;
+    return { x1: (sourceX + unitX * sourceRadius) / stageSize.width * 100, y1: (sourceY + unitY * sourceRadius) / stageSize.height * 100, x2: (targetX - unitX * targetRadius) / stageSize.width * 100, y2: (targetY - unitY * targetRadius) / stageSize.height * 100 };
+  }
+
   function node(item, isCenter = false) {
     const position = positions.get(item.id); const display = nodeDisplay[item.id] ?? {};
     return <button key={item.id} type="button" className={`spatial-node size-${display.size ?? "medium"} color-${display.color ?? "slate"} ${isCenter ? "center" : ""} ${selectedItemId === item.id ? "selected" : ""} ${dragPosition?.id === item.id ? "dragging" : ""}`} style={{ left: `${position.x}%`, top: `${position.y}%` }} onPointerDown={(event) => startPointer(event, item)} onPointerMove={(event) => movePointer(event, item)} onPointerUp={(event) => finishPointer(event, item)} onPointerCancel={cancelPointer} onDoubleClick={() => open(item)}>
@@ -133,10 +176,26 @@ export default function SpatialView({ items, selectedItemId, onSelectItem, inspe
     <div className="spatial-nav"><div className="workspace-picker"><select value={activeWorkspaceId} onChange={(event) => { setCenterId(null); onSelectWorkspace(event.target.value); }} aria-label="Рабочее пространство">{workspaces.map((workspace) => <option key={workspace.id} value={workspace.id}>{workspace.name}</option>)}</select><button className="workspace-picker__add" onClick={onCreateWorkspace} title="Создать рабочее пространство" aria-label="Создать рабочее пространство">＋</button></div><div className="spatial-breadcrumbs"><button onClick={() => setCenterId(entry?.parent?.id ?? null)} disabled={!center} aria-label="Назад">‹</button><button onClick={() => setCenterId(null)}>Обзор</button>{path.map((item) => <span key={item.id}>› <button onClick={() => setCenterId(item.id)}>{item.title}</button></span>)}</div></div>
     {!items.length ? <p className="spatial-empty">Здесь пока пусто. Создайте первую область.</p> : <div className="spatial-stage" ref={stageRef} onWheel={zoom} onClick={(event) => { if (event.target === event.currentTarget || event.target.classList.contains("spatial-viewport")) onSelectItem(null); }}>
       <div className={`spatial-viewport ${preferences.showGrid ? "show-grid" : ""}`} style={{ transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.scale})` }}>
-        {center && preferences.showLines && <svg className="spatial-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{visible.map((item) => { const source = positions.get(center.id); const target = positions.get(item.id); return <line key={item.id} x1={source.x} y1={source.y} x2={target.x} y2={target.y} />; })}</svg>}
+        {center && preferences.showLines && <svg className="spatial-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <marker id="hierarchy-arrow" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L8 4 L0 8 Z" /></marker>
+            <marker id="relation-arrow" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L8 4 L0 8 Z" /></marker>
+          </defs>
+          {preferences.showHierarchy && canonicalCandidates.filter((item) => displayedItems.has(item.id)).map((item) => {
+            const line = lineGeometry(center, item);
+            return <line className="link-hierarchy" key={`hierarchy-${item.id}`} {...line} markerEnd="url(#hierarchy-arrow)" />;
+          })}
+          {visibleRelations.map((relation) => {
+            const source = displayedItems.get(relation.source_id);
+            const target = displayedItems.get(relation.target_id);
+            const line = lineGeometry(source, target);
+            const marker = relation.type === "related_to" ? undefined : "url(#relation-arrow)";
+            return <line className={`link-relation link-${relation.type} ${relation.workspace_id === null ? "link-global" : "link-local"}`} key={`relation-${relation.id}`} {...line} markerEnd={marker} />;
+          })}
+        </svg>}
         {center && node(center, true)}{visible.map((item) => node(item))}
       </div>
-      {inspector && selectedPosition && <div ref={inspectorRef} className="spatial-inspector-shell" style={inspectorStyle}>{cloneElement(inspector, { style: { position: "relative", left: "auto", top: "auto", maxHeight: "inherit" } })}</div>}
+      {inspector && selectedPosition && <div ref={inspectorRef} className="spatial-inspector-shell" style={inspectorStyle} onWheel={(event) => event.stopPropagation()}>{cloneElement(inspector, { style: { position: "relative", left: "auto", top: "auto", maxHeight: "inherit" } })}</div>}
     </div>}
     {center && !visible.length && <p className="spatial-empty spatial-empty--children">Нет отображаемых дочерних элементов.</p>}
   </section>;
